@@ -1,10 +1,10 @@
 public class SubTask extends Task {
 
     private int epicId;
-    private String epicName;
 
-    public SubTask(String name, String description, Status status) {
+    public SubTask(String name, String description, Status status, int epicId) {
         super(name, description, status);
+        this.epicId = epicId;
     }
 
     public int getEpicId() {
@@ -15,22 +15,13 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public String getEpicName() {
-        return epicName;
-    }
-
-
-    public void setEpicName(String epicName) {
-        this.epicName = epicName;
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +
+                "id=" + getId() +
                 ", name=" + getName() +
                 ", description=" + getDescription() +
                 ", epicId=" + epicId +
-                ", epicName=" + getEpicName() +
                 ", status=" + getStatus() +
                 '}';
     }

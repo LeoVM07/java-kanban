@@ -2,53 +2,34 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    private ArrayList<SubTask> subTasks;
+    private ArrayList<Integer> subTasksId; //в списке будут храниться только id подзадач для сокращения расходов памяти
 
     public Epic(String name, String description) {
         super(name, description);
-        this.subTasks = new ArrayList<>();
+        this.subTasksId = new ArrayList<>();
     }
 
-    public void addSubTask(SubTask subTask) {
-        subTasks.add(subTask);
+    public ArrayList<Integer> getSubTasksId() {
+        return subTasksId;
     }
 
-    public ArrayList<SubTask> getSubTasks() {
-        return subTasks;
+    public void setSubTasksId(ArrayList<Integer> subTasksId) {
+        this.subTasksId = subTasksId;
     }
 
-    public void subTasksStatusCheck() { //метод ставит статус эпика в соответствии с состоянием всех его подзадач
-        int statusCount = 0;
-        if (subTasks.isEmpty()) {
-            setStatus(Status.NEW);
-        }
-        for (SubTask subTask : subTasks) {
-            if (subTask.getStatus() == Status.IN_PROGRESS) {
-                setStatus(Status.IN_PROGRESS);
-                break;
-            }
-            if (subTask.getStatus() == Status.DONE) {
-                statusCount++;
-            }
-            if (statusCount == subTasks.size()) {
-                setStatus(Status.DONE);
-            } else if (statusCount > 0 && statusCount < subTasks.size()) {
-                setStatus(Status.IN_PROGRESS);
-            } else {
-                setStatus(Status.NEW);
-            }
-        }
+    public void addSubTaskId(Integer subTaskId) {
+        subTasksId.add(subTaskId);
     }
 
     @Override
     public String toString() {
-        return "SubTask{" +
+        return "Epic{" +
+                "id=" + getId() +
                 ", name=" + getName() +
                 ", description=" + getDescription() +
                 ", status=" + getStatus() +
-                ", subTasks.size=" + subTasks.size() +
+                ", subTasksId.size=" + subTasksId.size() +
                 '}';
     }
-
-
 }
+
