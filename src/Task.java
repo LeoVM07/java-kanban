@@ -15,7 +15,7 @@ public class Task {
     public  enum Status {
         NEW,
         IN_PROGRESS,
-        DONE;
+        DONE
 
     }
 
@@ -27,7 +27,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "{id=" + id +
+        return "Task{id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 "'status='" + status + '\'' +
