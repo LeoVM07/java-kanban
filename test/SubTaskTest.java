@@ -5,9 +5,12 @@ class SubTaskTest {
 
     @Test
     public void checkTaskStatusIfNotSetAtCreation() {
-        final int TEST_EPIC_ID = 1;
-        SubTask subTask = new SubTask("Task", "Description", TEST_EPIC_ID);
-        Assertions.assertNotNull(subTask.getStatus());
+        TaskManager testManager = Managers.getDefault();
+        Epic testEpic = new Epic("Epic", "Description");
+        testManager.addEpic(testEpic);
+        SubTask testSubTask = new SubTask("SubTask", "Description", testEpic.getId());
+        testManager.addSubTask(testSubTask);
+        Assertions.assertNotNull(testSubTask.getStatus());
     }
 
 
