@@ -3,7 +3,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -145,7 +144,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldNotShowWrongSubTaskId () {
+    void shouldNotShowWrongSubTaskId() {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
         int epicId = epic.getId();
