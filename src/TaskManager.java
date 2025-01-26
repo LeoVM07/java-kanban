@@ -47,8 +47,8 @@ public interface TaskManager {
 
     void epicStatusCheck(Integer epicId);
 
-   List<Task> getTaskHistory();
+    List<Task> getTaskHistory();
 
-  //  List<Task> getHistory();
+    //  List<Task> getHistory();
 }
 
