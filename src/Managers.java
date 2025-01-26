@@ -1,7 +1,6 @@
 public class Managers {
 
 
-    //пока что метод возвращает новый InMemoryTaskManager, подозреваю, что в будущем этот метод станет параметризованным
     public static TaskManager getDefault () {
         return new InMemoryTaskManager();
     }

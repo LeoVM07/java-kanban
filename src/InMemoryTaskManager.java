@@ -39,7 +39,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStatus() == null) {
             task.setStatus(Task.Status.NEW);
         }
-        tasks.put(task.getId(), task);
+
+        /*Код ниже защищает задачу из списка от непредусмотренных менеджером изменений со стороны пользователя,
+        добавляя в список новую версию задачи. Такая же реализация будет для классов Эпик и СабТаск*/
+        Task newTask = new Task(task.getName(), task.getDescription(), task.getStatus());
+        newTask.setId(task.getId());
+        tasks.put(newTask.getId(), newTask);
         return task;
     }
 
@@ -53,6 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task removeTaskById(int id) {
         tasks.remove(id);
+        historyManager.remove(id);
         return tasks.get(id);
     }
 
@@ -83,22 +89,32 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
+
+    /*Изменил реализацию очистки СабТасков, т.к. начала выскакивать ConcurrentModificationException, а итераторы мы еще
+    не проходили */
     @Override
     public Epic removeEpicById(int id) {
-        for (SubTask subTask : subTasks.values()) {
-            if (subTask.getEpicId() == id) {
-                subTasks.remove(subTask.getId());
+        for (Integer subTaskId : epics.get(id).getSubTasksId()) {
+            if (subTasks.get(subTaskId).getEpicId() == id) {
+                subTasks.remove(subTaskId);
+                historyManager.remove(subTaskId);
             }
+            epics.remove(id);
+            historyManager.remove(id);
         }
-        epics.remove(id);
         return epics.get(id);
     }
 
     @Override
     public Epic addEpic(Epic epic) {
         epic.setId(generateId());
-        epics.put(epic.getId(), epic);
-        epicStatusCheck(epic.getId());
+
+        Epic newEpic = new Epic(epic.getName(), epic.getDescription());
+        newEpic.setId(epic.getId());
+
+        epics.put(newEpic.getId(), newEpic);
+        epicStatusCheck(newEpic.getId());
+
         return epic;
     }
 
@@ -132,9 +148,16 @@ public class InMemoryTaskManager implements TaskManager {
         if (subTask.getStatus() == null) {
             subTask.setStatus(Task.Status.NEW);
         }
-        subTasks.put(subTask.getId(), subTask);
-        epic.addSubTaskId(subTask.getId());
-        epicStatusCheck(subTask.getEpicId());
+
+        SubTask newSubTask = new SubTask(subTask.getName(), subTask.getDescription(), subTask.getEpicId());
+        newSubTask.setId(subTask.getId());
+        if (newSubTask.getStatus() == null) {
+            newSubTask.setStatus(Task.Status.NEW);
+        }
+        subTasks.put(newSubTask.getId(), newSubTask);
+        epic.addSubTaskId(newSubTask.getId());
+        epicStatusCheck(newSubTask.getEpicId());
+
         return subTask;
     }
 
@@ -152,8 +175,8 @@ public class InMemoryTaskManager implements TaskManager {
         epics.get(epicId).setSubTasksId(subTasksIds);
         subTasks.remove(id);
         epicStatusCheck(epicId);
+        historyManager.remove(id);
         return subTasks.get(id);
-
     }
 
     @Override
@@ -198,9 +221,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    /*Сильно сомневаюсь в правильности этого метода, но мне не хватило фантазии, чтобы придумать,
-     как ещё можно получить доступ к полю другого класса в мэйне или тестах.
-     Разве что наследовать тут от InMemoryHistoryManager ¯\_(ツ)_/¯  */
     @Override
     public List<Task> getTaskHistory() {
         return historyManager.getHistory();
