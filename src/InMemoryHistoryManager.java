@@ -9,19 +9,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         this.idToNode = new HashMap<>();
     }
 
-    private static class Node<T> {
-
-        public Task data;
-        public Node<Task> next;
-        public Node<Task> prev;
-
-        public Node(Task data, Node<Task> next, Node<Task> prev) {
-            this.data = data;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-
     @Override
     public void add(Task task) {
         if (task != null) {
@@ -30,7 +17,33 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+
     // код по сути дублирует LinkedList, тут добавить особо нечего ¯\_(ツ)_/¯
+    @Override
+    public void remove(int id) {
+        removeNode(idToNode.get(id));
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return getTasks();
+    }
+
+    private static class Node<T> {
+
+        public Task data;
+
+        public Node<Task> next;
+
+        public Node<Task> prev;
+
+        public Node(Task data, Node<Task> next, Node<Task> prev) {
+            this.data = data;
+            this.next = next;
+            this.prev = prev;
+        }
+
+    }
 
     private void linkLast(Task task) {
         Node<Task> oldLast = last;
@@ -41,11 +54,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             first = newNode;
         else
             oldLast.next = newNode;
-    }
-
-    @Override
-    public void remove(int id) {
-        removeNode(idToNode.get(id));
     }
 
     private void removeNode(Node<Task> node) {
@@ -71,14 +79,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    @Override
-    public List<Task> getHistory() {
-        List<Task> history = new ArrayList<>();
+    private ArrayList<Task> getTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
         Node<Task> countingTask = first;
         while (countingTask != null) {
-            history.add(countingTask.data);
+            tasks.add(countingTask.data);
             countingTask = countingTask.next;
         }
-        return history;
+        return tasks;
     }
 }
