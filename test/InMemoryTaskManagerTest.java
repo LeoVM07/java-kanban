@@ -2,14 +2,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.List;
 
-
-/*было требование сделать проверку для эпика, чтобы его нельзя было добавить себе как подзадачу, но такую проверку
-реализовать невозможно из-за того, как подзадачи добавляются в эпик в коде.
-Также нельзя сделать подзадачу своим же эпиком просто из-за того, что подзадача получает свой айди только при добавлении
-её через менеджер задач. Другое дело, что ей можно влепить id задачи или другой подзадачи как id эпика, но, чтобы этого
-избежать, надо по-другому реализовывать весь код. */
 
 class InMemoryTaskManagerTest {
     private TaskManager managerTest;
@@ -116,8 +111,7 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(task.getName(), managerTest.getTaskById(taskId).getName());
         Assertions.assertEquals(task.getDescription(), managerTest.getTaskById(taskId).getDescription());
         Assertions.assertEquals(task.getStatus(), managerTest.getTaskById(taskId).getStatus());
-        /* по ТЗ нужно сделать проверку всех полей, но ID присваивается при добавлении задачи в менеджер,
-        поэтому ВСЕ поля не могут быть равны по умолчанию */
+
     }
 
     @Test
@@ -147,6 +141,45 @@ class InMemoryTaskManagerTest {
         SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epicId);
         managerTest.addSubTask(subTask);
         assertNotNull(managerTest.getExactEpicSubTasks(epicId), "Подзадачи для эпика не найдены!");
+    }
+
+    @Test
+    void shouldNotShowWrongSubTaskId() {
+        Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
+        managerTest.addEpic(epic);
+        int epicId = epic.getId();
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epicId);
+        managerTest.addSubTask(subTask);
+        managerTest.removeSubTaskById(subTask.getId());
+        boolean isEmptySubTasks = managerTest.getExactEpicSubTasks(epicId).isEmpty();
+        assertTrue(isEmptySubTasks, "В списке не должно остаться неактуальных подзадач!");
+    }
+
+    @Test
+    public void namesForTasksShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
+        Task task = new Task("Task", "Description");
+        managerTest.addTask(task);
+        task.setName("Different name");
+        assertNotEquals(task.getName(), managerTest.getTaskById(task.getId()).getName(),
+                "Имена должны отличаться!");
+    }
+
+    @Test
+    public void namesForEpicsShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
+        Epic epic = new Epic("Epic", "Description");
+        managerTest.addTask(epic);
+        epic.setName("Different name");
+        assertNotEquals(epic.getName(), managerTest.getTaskById(epic.getId()).getName(),
+                "Имена должны отличаться!");
+    }
+
+    @Test
+    public void namesForSubTasksShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
+        SubTask subTask = new SubTask("Subtask", "Description", 1);
+        managerTest.addTask(subTask);
+        subTask.setName("Different name");
+        assertNotEquals(subTask.getName(), managerTest.getTaskById(subTask.getId()).getName(),
+                "Имена должны отличаться!");
     }
 
 }
