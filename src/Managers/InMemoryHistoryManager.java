@@ -1,3 +1,7 @@
+package Managers;
+
+import Tasks.Task;
+
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -16,7 +20,6 @@ public class InMemoryHistoryManager implements HistoryManager {
             linkLast(task);
         }
     }
-
 
     // код по сути дублирует LinkedList, тут добавить особо нечего ¯\_(ツ)_/¯
     @Override
