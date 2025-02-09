@@ -1,6 +1,6 @@
-import Managers.Managers;
-import Managers.TaskManager;
-import Tasks.Task;
+import managers.Managers;
+import managers.TaskManager;
+import tasks.Task;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 

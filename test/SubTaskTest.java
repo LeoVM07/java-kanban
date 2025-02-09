@@ -1,7 +1,7 @@
-import Managers.Managers;
-import Managers.TaskManager;
-import Tasks.Epic;
-import Tasks.SubTask;
+import managers.Managers;
+import managers.TaskManager;
+import tasks.Epic;
+import tasks.SubTask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

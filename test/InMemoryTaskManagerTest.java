@@ -1,8 +1,8 @@
-import Managers.Managers;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
-import Managers.TaskManager;
+import managers.Managers;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+import managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
-package Managers;
+package managers;
 
-import Exceptions.ManagerSaveException;
+import exceptions.ManagerSaveException;
 
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.io.*;
 import java.util.ArrayList;

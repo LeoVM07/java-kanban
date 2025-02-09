@@ -1,9 +1,9 @@
-import Managers.Managers;
-import Managers.TaskManager;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
-import Managers.FileBackedTaskManager;
+import managers.Managers;
+import managers.TaskManager;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+import managers.FileBackedTaskManager;
 
 import java.io.File;
 
@@ -25,20 +25,20 @@ public class Main {
         Task task3 = new Task("Задача 3", "Описание для задачи 3", Task.Status.DONE);
         manager.addTask(task3);
 
-        Tasks.Epic epic1 = new Tasks.Epic("Эпик 1", "Описание для эпика 1");
+        tasks.Epic epic1 = new tasks.Epic("Эпик 1", "Описание для эпика 1");
         manager.addEpic(epic1);
 
-        Tasks.SubTask subTask1 = new Tasks.SubTask("Подзадача 1", "Описание для подзадачи 1", epic1.getId());
+        tasks.SubTask subTask1 = new tasks.SubTask("Подзадача 1", "Описание для подзадачи 1", epic1.getId());
         manager.addSubTask(subTask1);
 
-        Tasks.SubTask subTask2 = new Tasks.SubTask("Подзадача 2", "Описание для подзадачи 2", epic1.getId());
+        tasks.SubTask subTask2 = new tasks.SubTask("Подзадача 2", "Описание для подзадачи 2", epic1.getId());
         manager.addSubTask(subTask2);
 
-        Tasks.SubTask subTask3 = new Tasks.SubTask("Подзадача 3", "Описание для подзадачи 3", Task.Status.DONE,
+        tasks.SubTask subTask3 = new tasks.SubTask("Подзадача 3", "Описание для подзадачи 3", Task.Status.DONE,
                 epic1.getId());
         manager.addSubTask(subTask3);
 
-        Tasks.Epic epic2 = new Tasks.Epic("Эпик 2", "Описание для эпика 2");
+        tasks.Epic epic2 = new tasks.Epic("Эпик 2", "Описание для эпика 2");
         manager.addEpic(epic2);
 
         System.out.println("Сохранённые задачи созданного с нуля менеджера:");

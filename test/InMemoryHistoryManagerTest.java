@@ -1,7 +1,7 @@
-import Managers.Managers;
-import Managers.TaskManager;
-import Managers.HistoryManager;
-import Tasks.Task;
+import managers.Managers;
+import managers.TaskManager;
+import managers.HistoryManager;
+import tasks.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
