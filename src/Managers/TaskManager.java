@@ -1,3 +1,9 @@
+package Managers;
+
+import Tasks.Epic;
+import Tasks.SubTask;
+import Tasks.Task;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +55,6 @@ public interface TaskManager {
 
     List<Task> getTaskHistory();
 
-    //  List<Task> getHistory();
+    //  List<Tasks.Task> getHistory();
 }
 

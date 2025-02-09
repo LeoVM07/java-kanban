@@ -1,6 +1,12 @@
+import Managers.Managers;
+import Tasks.Epic;
+import Tasks.SubTask;
+import Tasks.Task;
+import Managers.TaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
@@ -157,7 +163,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void namesForTasksShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
-        Task task = new Task("Task", "Description");
+        Task task = new Task("Tasks.Task", "Description");
         managerTest.addTask(task);
         task.setName("Different name");
         assertNotEquals(task.getName(), managerTest.getTaskById(task.getId()).getName(),
@@ -166,7 +172,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void namesForEpicsShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
-        Epic epic = new Epic("Epic", "Description");
+        Epic epic = new Epic("Tasks.Epic", "Description");
         managerTest.addTask(epic);
         epic.setName("Different name");
         assertNotEquals(epic.getName(), managerTest.getTaskById(epic.getId()).getName(),
