@@ -1,20 +1,25 @@
+package managers;
+
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Epic> epics;
-    private final HashMap<Integer, SubTask> subTasks;
-    private int id = 1;
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Epic> epics;
+    protected final HashMap<Integer, SubTask> subTasks;
+    protected int id = 1;
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subTasks = new HashMap<>();
     }
-
 
     //*******ТАСКИ*******
     @Override
@@ -39,9 +44,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getStatus() == null) {
             task.setStatus(Task.Status.NEW);
         }
-
-        /*Код ниже защищает задачу из списка от непредусмотренных менеджером изменений со стороны пользователя,
-        добавляя в список новую версию задачи. Такая же реализация будет для классов Эпик и СабТаск*/
         Task newTask = new Task(task.getName(), task.getDescription(), task.getStatus());
         newTask.setId(task.getId());
         tasks.put(newTask.getId(), newTask);
@@ -89,9 +91,6 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-
-    /*Изменил реализацию очистки СабТасков, т.к. начала выскакивать ConcurrentModificationException, а итераторы мы еще
-    не проходили */
     @Override
     public Epic removeEpicById(int id) {
         for (Integer subTaskId : epics.get(id).getSubTasksId()) {
@@ -125,7 +124,6 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     //*******САБТАСКИ*******
-
     @Override
     public ArrayList<SubTask> getAllSubTasks() {
         return new ArrayList<>(subTasks.values());
@@ -149,7 +147,7 @@ public class InMemoryTaskManager implements TaskManager {
             subTask.setStatus(Task.Status.NEW);
         }
 
-        SubTask newSubTask = new SubTask(subTask.getName(), subTask.getDescription(), subTask.getEpicId());
+        SubTask newSubTask = new SubTask(subTask.getName(), subTask.getDescription(), subTask.getStatus(), subTask.getEpicId());
         newSubTask.setId(subTask.getId());
         if (newSubTask.getStatus() == null) {
             newSubTask.setStatus(Task.Status.NEW);
@@ -219,7 +217,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
 
     @Override
     public List<Task> getTaskHistory() {

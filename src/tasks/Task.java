@@ -1,3 +1,5 @@
+package tasks;
+
 import java.util.Objects;
 
 public class Task {
@@ -12,10 +14,20 @@ public class Task {
         this.description = description;
     }
 
-    public  enum Status {
-        NEW,
-        IN_PROGRESS,
-        DONE
+    public enum Status {
+        NEW("NEW"),
+        IN_PROGRESS("IN_PROGRESS"),
+        DONE("DONE");
+
+        private final String taskStatus;
+
+        Status(String taskStatus) {
+            this.taskStatus = taskStatus;
+        }
+
+        public String getTaskStatus() {
+            return taskStatus;
+        }
 
     }
 
@@ -27,7 +39,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{id=" + id +
+        return "Tasks.Task{id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 "'status='" + status + '\'' +
@@ -50,7 +62,6 @@ public class Task {
         this.description = description;
     }
 
-
     public Status getStatus() {
         return status;
     }
@@ -65,6 +76,10 @@ public class Task {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String taskToString() {
+        return String.format("%s, %s, %s, %s, %s, -", getId(), TaskType.TASK, getName(), getStatus(), getDescription());
     }
 
     @Override
