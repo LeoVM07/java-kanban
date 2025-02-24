@@ -6,6 +6,7 @@ import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -51,8 +52,10 @@ public interface TaskManager {
 
     int generateId();
 
-    void epicStatusCheck(Integer epicId);
+    void epicStateCheck(Integer epicId);
 
     List<Task> getTaskHistory();
+
+    Set<Task> getPrioritizedTasks();
 }
 

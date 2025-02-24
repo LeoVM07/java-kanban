@@ -1,5 +1,9 @@
 package tasks;
 
+import managers.DTF;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -7,7 +11,7 @@ public class Epic extends Task {
     private ArrayList<Integer> subTasksId; //в списке будут храниться только id подзадач для сокращения расходов памяти
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, Duration.ofMinutes(0), LocalDateTime.now());
         this.subTasksId = new ArrayList<>();
     }
 
@@ -25,7 +29,9 @@ public class Epic extends Task {
 
     @Override
     public String taskToString() {
-        return String.format("%s, %s, %s, %s, %s, -", getId(), TaskType.EPIC, getName(), getStatus(), getDescription());
+        return String.format("%s, %s, %s, %s, %s, -, %s, %s, %s,",
+                getId(), TaskType.EPIC, getName(), getStatus(), getDescription(), getDuration().toMinutes(),
+                getStartTime().format(DTF.getFormatter()), getEndTime().format(DTF.getFormatter()));
     }
 
     @Override
@@ -36,6 +42,9 @@ public class Epic extends Task {
                 ", description=" + getDescription() +
                 ", status=" + getStatus() +
                 ", subTasksId.size=" + subTasksId.size() +
+                ", duration=" + getDuration() +
+                "min., startTime=" + getStartTime().format(DTF.getFormatter()) +
+                ", endTime=" + getEndTime().format(DTF.getFormatter()) +
                 '}';
     }
 }
