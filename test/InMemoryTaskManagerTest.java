@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -22,7 +24,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldNotBeNullAndEqualsForTasksTest() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         int taskId = task.getId();
         final Task savedTask = managerTest.getTaskById(taskId);
@@ -33,7 +36,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void taskListShouldNotBeNullAndEqualsTest() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
 
         final List<Task> tasks = managerTest.getAllTasks();
@@ -68,7 +72,8 @@ class InMemoryTaskManagerTest {
     void shouldNotBNullAndEqualsForSubTasksTest() {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epic.getId());
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
         int subTaskId = subTask.getId();
         final Task savedSubTask = managerTest.getSubTaskById(subTaskId);
@@ -81,7 +86,8 @@ class InMemoryTaskManagerTest {
     void subTaskListShouldNotBeNullAndEqualsTest() {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epic.getId());
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
 
         final List<SubTask> subTasks = managerTest.getAllSubTasks();
@@ -92,7 +98,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void taskByIdAndTaskFromHistoryShouldBeEqual() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         managerTest.getTaskById(task.getId());
         Task taskInHistory = managerTest.getTaskHistory().get(0);
@@ -101,9 +108,11 @@ class InMemoryTaskManagerTest {
 
     @Test
     void newTaskAndTaskWithGeneratedIdShouldNotConflictWTFDoesThatEvenMean() {
-        Task task1 = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task1 = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task1);
-        Task task2 = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task2 = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         task2.setId(1);
         managerTest.addTask(task2);
         Assertions.assertNotEquals(task1, task2, "ID задач не должен совпадать!");
@@ -111,7 +120,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void allFieldsShouldBeEqualButItIsImpossibleBecauseTheIDIsGeneratedIndividuallyForEachTaskWhenTaskManagerAddsIt() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         int taskId = task.getId();
         Assertions.assertEquals(task.getName(), managerTest.getTaskById(taskId).getName());
@@ -122,7 +132,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     void shouldReturnDifferentTasksById() {
-        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW);
+        Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
+                Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         int taskId = task.getId();
 
@@ -130,7 +141,8 @@ class InMemoryTaskManagerTest {
         managerTest.addEpic(epic);
         int epicId = epic.getId();
 
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epicId);
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
         int subTaskId = subTask.getId();
 
@@ -144,7 +156,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
         int epicId = epic.getId();
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epicId);
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
         assertNotNull(managerTest.getExactEpicSubTasks(epicId), "Подзадачи для эпика не найдены!");
     }
@@ -154,7 +167,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
         int epicId = epic.getId();
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", epicId);
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
         managerTest.removeSubTaskById(subTask.getId());
         boolean isEmptySubTasks = managerTest.getExactEpicSubTasks(epicId).isEmpty();
@@ -163,7 +177,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void namesForTasksShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
-        Task task = new Task("Tasks.Task", "Description");
+        Task task = new Task("Tasks.Task", "Description", Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         task.setName("Different name");
         assertNotEquals(task.getName(), managerTest.getTaskById(task.getId()).getName(),
@@ -181,11 +195,72 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void namesForSubTasksShouldNotBeEqualAfterSettingNameToUserTaskWithoutManager() {
-        SubTask subTask = new SubTask("Subtask", "Description", 1);
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                1, Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(subTask);
         subTask.setName("Different name");
         assertNotEquals(subTask.getName(), managerTest.getTaskById(subTask.getId()).getName(),
                 "Имена должны отличаться!");
     }
 
+    @Test
+    public void epicStatusConfirmationAccordingToSubTaskStatus() {
+        Epic epic1 = new Epic("Epic1", "Epic1 description");
+        managerTest.addEpic(epic1);
+
+        SubTask subTask1 = new SubTask("SubTask1", "SubTask1 desription", Task.Status.NEW,
+                epic1.getId(), Duration.ofMinutes(15), LocalDateTime.now());
+        SubTask subTask2 = new SubTask("SubTask1", "SubTask1 desription", Task.Status.NEW,
+                epic1.getId(), Duration.ofMinutes(10), LocalDateTime.now());
+        managerTest.addSubTask(subTask1);
+        managerTest.addSubTask(subTask2);
+        Assertions.assertEquals(Task.Status.NEW, managerTest.getEpicById(epic1.getId()).getStatus());
+
+        subTask1.setStatus(Task.Status.IN_PROGRESS);
+        subTask2.setStatus(Task.Status.IN_PROGRESS);
+        managerTest.updateSubTask(subTask1);
+        managerTest.updateSubTask(subTask2);
+        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).getStatus());
+
+        subTask1.setStatus(Task.Status.DONE);
+        subTask2.setStatus(Task.Status.DONE);
+        managerTest.updateSubTask(subTask1);
+        managerTest.updateSubTask(subTask2);
+        Assertions.assertEquals(Task.Status.DONE, managerTest.getEpicById(epic1.getId()).getStatus());
+
+        subTask1.setStatus(Task.Status.NEW);
+        managerTest.updateSubTask(subTask1);
+        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).getStatus());
+    }
+
+    @Test
+    public void prioritizedTasksTimeClashingTest() {
+        LocalDateTime testingTime = LocalDateTime.of(2025, 2, 20, 12, 30);
+        Task task1 = new Task("task1", "description1", Task.Status.NEW,
+                Duration.ofMinutes(10), testingTime);
+        Task task2 = new Task("task2", "description2", Task.Status.IN_PROGRESS,
+                Duration.ofMinutes(10), testingTime.plusMinutes(10));
+        Task task3 = new Task("task3", "description3", Task.Status.DONE,
+                Duration.ofMinutes(60), testingTime.minusMinutes(50));
+        Task task4 = new Task("task4", "description4", Task.Status.NEW,
+                Duration.ofMinutes(10), testingTime);
+        Task task5 = new Task("task5", "description5", Task.Status.NEW,
+                Duration.ofMinutes(20), testingTime.minusMinutes(10));
+        Task task6 = new Task("task6", "description6", Task.Status.NEW,
+                Duration.ofMinutes(20), testingTime.minusMinutes(15));
+        Task task7 = new Task("task7", "description7", Task.Status.DONE,
+                Duration.ofMinutes(70), testingTime.minusMinutes(60));
+        Task task8 = new Task("task3", "description3", Task.Status.IN_PROGRESS,
+                Duration.ofMinutes(120), testingTime.minusMinutes(60));
+        managerTest.addTask(task1);
+        managerTest.addTask(task2);
+        managerTest.addTask(task3);
+        managerTest.addTask(task4);
+        managerTest.addTask(task5);
+        managerTest.addTask(task6);
+        managerTest.addTask(task7);
+        managerTest.addTask(task8);
+
+        Assertions.assertEquals(2, managerTest.getPrioritizedTasks().size());
+    }
 }

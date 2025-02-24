@@ -6,6 +6,8 @@ import tasks.Task;
 import managers.FileBackedTaskManager;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -16,26 +18,31 @@ public class Main {
         File data = new File("Saved_Tasks.csv");
         FileBackedTaskManager manager = Managers.getFileBackedTaskManager(data);
 
-        Task task1 = new Task("Задача 1", "Описание для задачи 1");
+        Task task1 = new Task("Задача 1", "Описание для задачи 1", Duration.ofMinutes(5),
+                LocalDateTime.now().plusMinutes(20));
         manager.addTask(task1);
 
-        Task task2 = new Task("Задача 2", "Описание для задачи 2", Task.Status.IN_PROGRESS);
+        Task task2 = new Task("Задача 2", "Описание для задачи 2", Task.Status.IN_PROGRESS,
+                Duration.ofMinutes(10), LocalDateTime.now().plusHours(1).plusMinutes(30));
         manager.addTask(task2);
 
-        Task task3 = new Task("Задача 3", "Описание для задачи 3", Task.Status.DONE);
+        Task task3 = new Task("Задача 3", "Описание для задачи 3", Task.Status.DONE,
+                Duration.ofMinutes(7), LocalDateTime.now());
         manager.addTask(task3);
 
         tasks.Epic epic1 = new tasks.Epic("Эпик 1", "Описание для эпика 1");
         manager.addEpic(epic1);
 
-        tasks.SubTask subTask1 = new tasks.SubTask("Подзадача 1", "Описание для подзадачи 1", epic1.getId());
+        tasks.SubTask subTask1 = new tasks.SubTask("Подзадача 1", "Описание для подзадачи 1",
+                epic1.getId(), Duration.ofMinutes(4), LocalDateTime.now().plusMinutes(10));
         manager.addSubTask(subTask1);
 
-        tasks.SubTask subTask2 = new tasks.SubTask("Подзадача 2", "Описание для подзадачи 2", epic1.getId());
+        tasks.SubTask subTask2 = new tasks.SubTask("Подзадача 2", "Описание для подзадачи 2",
+                epic1.getId(), Duration.ofMinutes(6), LocalDateTime.now().plusHours(1));
         manager.addSubTask(subTask2);
 
-        tasks.SubTask subTask3 = new tasks.SubTask("Подзадача 3", "Описание для подзадачи 3", Task.Status.DONE,
-                epic1.getId());
+        tasks.SubTask subTask3 = new tasks.SubTask("Подзадача 3", "Описание для подзадачи 3",
+                Task.Status.DONE, epic1.getId(), Duration.ofMinutes(8), LocalDateTime.now().plusMinutes(15));
         manager.addSubTask(subTask3);
 
         tasks.Epic epic2 = new tasks.Epic("Эпик 2", "Описание для эпика 2");
@@ -47,8 +54,8 @@ public class Main {
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(data);
         System.out.println("Загруженные задачи с помощью метода loadFromFile:");
         printAllTasks(loadedManager);
-
     }
+
 
     public static void printAllTasks(TaskManager manager) {
         System.out.println("Список задач:");

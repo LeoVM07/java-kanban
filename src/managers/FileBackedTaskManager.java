@@ -7,6 +7,8 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -112,7 +114,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             switch (taskType) {
                 case "TASK":
-                    Task newTask = new Task(splitedTask[2], splitedTask[4], getStatusFromString(splitedTask[3]));
+                    Task newTask = new Task(splitedTask[2], splitedTask[4], getStatusFromString(splitedTask[3]),
+                            Duration.ofMinutes(Long.parseLong(splitedTask[6])),
+                            LocalDateTime.parse(splitedTask[7], DTF.getFormatter()));
                     newTask.setId(taskId);
                     loadedManager.tasks.put(taskId, newTask);
                     break;
@@ -121,13 +125,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     Epic newEpic = new Epic(splitedTask[2], splitedTask[4]);
                     newEpic.setId(taskId);
                     newEpic.setStatus(getStatusFromString(splitedTask[3]));
+                    newEpic.setDuration(Duration.ofMinutes(Long.parseLong(splitedTask[6])));
+                    newEpic.setStartTime(LocalDateTime.parse(splitedTask[7], DTF.getFormatter()));
                     loadedManager.epics.put(taskId, newEpic);
                     break;
 
                 case "SUBTASK":
                     int epicID = Integer.parseInt(splitedTask[5]);
                     SubTask newSubTask = new SubTask(splitedTask[2], splitedTask[4], getStatusFromString(splitedTask[3]),
-                            epicID);
+                            epicID, Duration.ofMinutes(Long.parseLong(splitedTask[6])),
+                            LocalDateTime.parse(splitedTask[7], DTF.getFormatter()));
                     newSubTask.setStatus(getStatusFromString(splitedTask[3]));
                     newSubTask.setId(taskId);
                     loadedManager.getEpicById(epicID).addSubTaskId(taskId); //добавляем эпику ID соответствующего сабтаска
@@ -157,7 +164,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     //Метод конвертирует строчное обозначение статуса задачи в необходимый тип
-    //мы такую реализацию свича не проходили, но IDEA подсказала
     public static Task.Status getStatusFromString(String status) {
         return switch (status) {
             case "NEW" -> Task.Status.NEW;
@@ -194,7 +200,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private void writeStringsToFile(ArrayList<String> tasksAsStrings) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(data))) {
 
-            String title = "id, type, name, status, description, epicID";// Первая строка -- заголовок файла
+            String title = "id, type, name, status, description, epicID, duration, startTime, endTime";// Первая строка -- заголовок файла
             bw.write(title);
             bw.newLine();
 

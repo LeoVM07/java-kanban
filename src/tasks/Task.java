@@ -1,5 +1,9 @@
 package tasks;
 
+import managers.DTF;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,10 +12,28 @@ public class Task {
     private String description;
     private int id;
     private Status status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, Duration duration) {
         this.name = name;
         this.description = description;
+        this.duration = duration;
+    }
+
+    public Task(String name, String description, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public enum Status {
@@ -29,21 +51,23 @@ public class Task {
             return taskStatus;
         }
 
+
     }
 
-    public Task(String name, String description, Status status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
+    public Duration getDuration() {
+        return duration;
     }
 
-    @Override
-    public String toString() {
-        return "Tasks.Task{id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                "'status='" + status + '\'' +
-                '}';
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public String getName() {
@@ -78,8 +102,27 @@ public class Task {
         this.id = id;
     }
 
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
     public String taskToString() {
-        return String.format("%s, %s, %s, %s, %s, -", getId(), TaskType.TASK, getName(), getStatus(), getDescription());
+        return String.format("%s, %s, %s, %s, %s, -, %s, %s, %s", id, TaskType.TASK, name, status,
+                description, duration.toMinutes(), startTime.format(DTF.getFormatter()),
+                getEndTime().format(DTF.getFormatter()));
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", duration=" + duration.toMinutes() +
+                "min., startTime=" + startTime.format(DTF.getFormatter()) +
+                ", endTime=" + getEndTime().format(DTF.getFormatter()) +
+                '}';
     }
 
     @Override
