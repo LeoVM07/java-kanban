@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
     private FileBackedTaskManager testingManager;
     private File fileToSave;
@@ -24,10 +26,12 @@ public class FileBackedTaskManagerTest {
         }
         this.testingManager = Managers.getFileBackedTaskManager(fileToSave);
 
-        Task task1 = new Task("TestTask1", "TestTask1 description");
+        Task task1 = new Task("TestTask1", "TestTask1 description",
+                Duration.ofMinutes(5), LocalDateTime.now());
         testingManager.addTask(task1);
 
-        Task task2 = new Task("TestTask2", "TestTask2 description", Task.Status.IN_PROGRESS);
+        Task task2 = new Task("TestTask2", "TestTask2 description", Task.Status.IN_PROGRESS,
+                Duration.ofMinutes(5), LocalDateTime.now());
         testingManager.addTask(task2);
 
         Epic epic1 = new Epic("TestEpic1", "TestEpic1 description");
@@ -40,15 +44,15 @@ public class FileBackedTaskManagerTest {
         testingManager.addEpic(epic3);
 
         SubTask subTask1 = new SubTask("TestSubTask1", "TestSubTask1 description", Task.Status.DONE,
-                epic1.getId());
+                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         testingManager.addSubTask(subTask1);
 
         SubTask subTask2 = new SubTask("TestSubTask2", "TestSubTask2 description", Task.Status.IN_PROGRESS,
-                epic1.getId());
+                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         testingManager.addSubTask(subTask2);
 
         SubTask subTask3 = new SubTask("TestSubTask3", "TestSubTask3 description", Task.Status.DONE,
-                epic3.getId());
+                epic3.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         testingManager.addSubTask(subTask3);
     }
 
