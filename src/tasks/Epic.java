@@ -3,7 +3,6 @@ package tasks;
 import managers.DTF;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -11,8 +10,9 @@ public class Epic extends Task {
     private ArrayList<Integer> subTasksId; //в списке будут храниться только id подзадач для сокращения расходов памяти
 
     public Epic(String name, String description) {
-        super(name, description, Duration.ofMinutes(0), LocalDateTime.now());
+        super(name, description, Duration.ofMinutes(0));
         this.subTasksId = new ArrayList<>();
+        this.setStatus(Status.NEW);
     }
 
     public ArrayList<Integer> getSubTasksId() {

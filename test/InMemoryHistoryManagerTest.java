@@ -25,11 +25,11 @@ public class InMemoryHistoryManagerTest {
         this.taskManager = Managers.getDefault();
 
         task1 = new Task("task1", "description1", Task.Status.NEW,
-                Duration.ofMinutes(5), LocalDateTime.now());
+                Duration.ofMinutes(5), LocalDateTime.now().minusMinutes(20));
         task2 = new Task("task2", "description2", Task.Status.IN_PROGRESS,
                 Duration.ofMinutes(10), LocalDateTime.now());
         task3 = new Task("task3", "description3", Task.Status.DONE,
-                Duration.ofMinutes(20), LocalDateTime.now());
+                Duration.ofMinutes(20), LocalDateTime.now().plusMinutes(10));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
@@ -40,9 +40,9 @@ public class InMemoryHistoryManagerTest {
         taskManager.addEpic(epic2);
 
         subTask1 = new SubTask("subTask1", "description1", epic1.getId(),
-                Duration.ofMinutes(69), LocalDateTime.now());
+                Duration.ofMinutes(69), LocalDateTime.now().minusMinutes(120));
         subTask2 = new SubTask("subTask2", "description2", epic1.getId(),
-                Duration.ofMinutes(17), LocalDateTime.now());
+                Duration.ofMinutes(17), LocalDateTime.now().plusMinutes(40));
         taskManager.addSubTask(subTask1);
         taskManager.addSubTask(subTask2);
     }

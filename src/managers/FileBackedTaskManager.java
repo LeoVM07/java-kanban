@@ -10,6 +10,7 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -137,11 +138,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             LocalDateTime.parse(splitedTask[7], DTF.getFormatter()));
                     newSubTask.setStatus(getStatusFromString(splitedTask[3]));
                     newSubTask.setId(taskId);
-                    loadedManager.getEpicById(epicID).addSubTaskId(taskId); //добавляем эпику ID соответствующего сабтаска
-                    loadedManager.subTasks.put(taskId, newSubTask);
-                    break;
+
+                    Optional<Epic> epicOpt = loadedManager.getEpicById(epicID);
+                    if (epicOpt.isPresent()) {
+                        epicOpt.get().addSubTaskId(taskId); //добавляем эпику ID соответствующего сабтаска
+                        loadedManager.subTasks.put(taskId, newSubTask);
+                        break;
+                    } else {
+                        throw new ManagerSaveException("Эпика с id " + epicID + " не существует!");
+                    }
             }
         }
+
         //Код ниже выставляет текущий id задачи в соответствии с размером списка загруженных задач
         loadedManager.setManagerID(loadedTasks.size() + 3);
         return loadedManager;
