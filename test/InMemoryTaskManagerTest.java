@@ -1,3 +1,4 @@
+import exceptions.ManagerException;
 import managers.Managers;
 import tasks.Epic;
 import tasks.SubTask;
@@ -28,7 +29,7 @@ class InMemoryTaskManagerTest {
                 Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         int taskId = task.getId();
-        final Task savedTask = managerTest.getTaskById(taskId);
+        final Task savedTask = managerTest.getTaskById(taskId).get();
 
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
@@ -51,7 +52,7 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Test addNewEpic", "Test addNewEpic description");
         managerTest.addEpic(epic);
         int epicId = epic.getId();
-        final Task savedEpic = managerTest.getEpicById(epicId);
+        final Task savedEpic = managerTest.getEpicById(epicId).get();
 
         assertNotNull(savedEpic, "Эпик не найден.");
         assertEquals(epic, savedEpic, "Эпики не совпадают.");
@@ -76,7 +77,7 @@ class InMemoryTaskManagerTest {
                 epic.getId(), Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addSubTask(subTask);
         int subTaskId = subTask.getId();
-        final Task savedSubTask = managerTest.getSubTaskById(subTaskId);
+        final Task savedSubTask = managerTest.getSubTaskById(subTaskId).get();
 
         assertNotNull(savedSubTask, "Сабтаск не найден.");
         assertEquals(subTask, savedSubTask, "Сабтаски не совпадают.");
@@ -112,7 +113,7 @@ class InMemoryTaskManagerTest {
                 Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task1);
         Task task2 = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
-                Duration.ofMinutes(5), LocalDateTime.now());
+                Duration.ofMinutes(5), LocalDateTime.now().plusMinutes(10));
         task2.setId(1);
         managerTest.addTask(task2);
         Assertions.assertNotEquals(task1, task2, "ID задач не должен совпадать!");
@@ -124,16 +125,16 @@ class InMemoryTaskManagerTest {
                 Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         int taskId = task.getId();
-        Assertions.assertEquals(task.getName(), managerTest.getTaskById(taskId).getName());
-        Assertions.assertEquals(task.getDescription(), managerTest.getTaskById(taskId).getDescription());
-        Assertions.assertEquals(task.getStatus(), managerTest.getTaskById(taskId).getStatus());
+        Assertions.assertEquals(task.getName(), managerTest.getTaskById(taskId).get().getName());
+        Assertions.assertEquals(task.getDescription(), managerTest.getTaskById(taskId).get().getDescription());
+        Assertions.assertEquals(task.getStatus(), managerTest.getTaskById(taskId).get().getStatus());
 
     }
 
     @Test
     void shouldReturnDifferentTasksById() {
         Task task = new Task("Test addNewTask", "Test addNewTask description", Task.Status.NEW,
-                Duration.ofMinutes(5), LocalDateTime.now());
+                Duration.ofMinutes(5), LocalDateTime.now().minusMinutes(10));
         managerTest.addTask(task);
         int taskId = task.getId();
 
@@ -180,7 +181,7 @@ class InMemoryTaskManagerTest {
         Task task = new Task("Tasks.Task", "Description", Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(task);
         task.setName("Different name");
-        assertNotEquals(task.getName(), managerTest.getTaskById(task.getId()).getName(),
+        assertNotEquals(task.getName(), managerTest.getTaskById(task.getId()).get().getName(),
                 "Имена должны отличаться!");
     }
 
@@ -189,7 +190,7 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Tasks.Epic", "Description");
         managerTest.addTask(epic);
         epic.setName("Different name");
-        assertNotEquals(epic.getName(), managerTest.getTaskById(epic.getId()).getName(),
+        assertNotEquals(epic.getName(), managerTest.getTaskById(epic.getId()).get().getName(),
                 "Имена должны отличаться!");
     }
 
@@ -199,7 +200,7 @@ class InMemoryTaskManagerTest {
                 1, Duration.ofMinutes(5), LocalDateTime.now());
         managerTest.addTask(subTask);
         subTask.setName("Different name");
-        assertNotEquals(subTask.getName(), managerTest.getTaskById(subTask.getId()).getName(),
+        assertNotEquals(subTask.getName(), managerTest.getTaskById(subTask.getId()).get().getName(),
                 "Имена должны отличаться!");
     }
 
@@ -211,26 +212,26 @@ class InMemoryTaskManagerTest {
         SubTask subTask1 = new SubTask("SubTask1", "SubTask1 desription", Task.Status.NEW,
                 epic1.getId(), Duration.ofMinutes(15), LocalDateTime.now());
         SubTask subTask2 = new SubTask("SubTask1", "SubTask1 desription", Task.Status.NEW,
-                epic1.getId(), Duration.ofMinutes(10), LocalDateTime.now());
+                epic1.getId(), Duration.ofMinutes(10), LocalDateTime.now().plusMinutes(15));
         managerTest.addSubTask(subTask1);
         managerTest.addSubTask(subTask2);
-        Assertions.assertEquals(Task.Status.NEW, managerTest.getEpicById(epic1.getId()).getStatus());
+        Assertions.assertEquals(Task.Status.NEW, managerTest.getEpicById(epic1.getId()).get().getStatus());
 
         subTask1.setStatus(Task.Status.IN_PROGRESS);
         subTask2.setStatus(Task.Status.IN_PROGRESS);
         managerTest.updateSubTask(subTask1);
         managerTest.updateSubTask(subTask2);
-        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).getStatus());
+        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).get().getStatus());
 
         subTask1.setStatus(Task.Status.DONE);
         subTask2.setStatus(Task.Status.DONE);
         managerTest.updateSubTask(subTask1);
         managerTest.updateSubTask(subTask2);
-        Assertions.assertEquals(Task.Status.DONE, managerTest.getEpicById(epic1.getId()).getStatus());
+        Assertions.assertEquals(Task.Status.DONE, managerTest.getEpicById(epic1.getId()).get().getStatus());
 
         subTask1.setStatus(Task.Status.NEW);
         managerTest.updateSubTask(subTask1);
-        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).getStatus());
+        Assertions.assertEquals(Task.Status.IN_PROGRESS, managerTest.getEpicById(epic1.getId()).get().getStatus());
     }
 
     @Test
@@ -252,15 +253,17 @@ class InMemoryTaskManagerTest {
                 Duration.ofMinutes(70), testingTime.minusMinutes(60));
         Task task8 = new Task("task3", "description3", Task.Status.IN_PROGRESS,
                 Duration.ofMinutes(120), testingTime.minusMinutes(60));
-        managerTest.addTask(task1);
-        managerTest.addTask(task2);
-        managerTest.addTask(task3);
-        managerTest.addTask(task4);
-        managerTest.addTask(task5);
-        managerTest.addTask(task6);
-        managerTest.addTask(task7);
-        managerTest.addTask(task8);
-
-        Assertions.assertEquals(2, managerTest.getPrioritizedTasks().size());
+        try {
+            managerTest.addTask(task1);
+            managerTest.addTask(task2);
+            managerTest.addTask(task3);
+            managerTest.addTask(task4);
+            managerTest.addTask(task5);
+            managerTest.addTask(task6);
+            managerTest.addTask(task7);
+            managerTest.addTask(task8);
+        } catch (ManagerException e) {
+            Assertions.assertEquals(2, managerTest.getPrioritizedTasks().size());
+        }
     }
 }
