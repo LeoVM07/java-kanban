@@ -1,5 +1,6 @@
 package managers;
 
+import exceptions.ManagerException;
 import exceptions.TaskTimeException;
 import tasks.Epic;
 import tasks.SubTask;
@@ -43,20 +44,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTaskById(int id) {
+    public Optional<Task> getTaskById(int id) {
         historyManager.add(tasks.get(id));
-        return tasks.get(id);
+        Task task = tasks.get(id);
+        if (task == null) {
+            return Optional.empty();
+        }
+        return Optional.of(task);
     }
 
     @Override
     public Task addTask(Task task) {
+        boolean isClashing; //переменная для проверки наложения задач по времени
         task.setId(generateId());
-        boolean isClashing = true; //переменная для проверки наложения задач по времени
 
         try {
             isClashing = validateTaskTime(task);
         } catch (TaskTimeException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerException(e.getMessage());
         }
 
         if (task.getStatus() == null) {
@@ -73,8 +78,16 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task updateTask(Task task) {
-        Task currentTask = tasks.get(task.getId());
-        tasks.put(currentTask.getId(), currentTask);
+        try {
+            if (tasks.containsKey(task.getId())) {
+                prioritizedTasks.remove(tasks.get(task.getId()));
+                prioritizedTasks.add(task);
+                tasks.replace(task.getId(), task);
+            }
+            validateTaskTime(tasks.get(task.getId()));
+        } catch (TaskTimeException e) {
+            throw new ManagerException(e.getMessage());
+        }
         return task;
     }
 
@@ -102,9 +115,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpicById(int id) {
-        historyManager.add(epics.get(id));
-        return epics.get(id);
+    public Optional<Epic> getEpicById(int id) {
+        if (epics.containsKey(id)) {
+            historyManager.add(epics.get(id));
+            return Optional.of(epics.get(id));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -123,9 +140,9 @@ public class InMemoryTaskManager implements TaskManager {
                 subTasks.remove(subTaskId);
                 historyManager.remove(subTaskId);
             }
-            epics.remove(id);
-            historyManager.remove(id);
         }
+        epics.remove(id);
+        historyManager.remove(id);
         return epics.get(id);
     }
 
@@ -135,6 +152,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         Epic newEpic = new Epic(epic.getName(), epic.getDescription());
         newEpic.setId(epic.getId());
+        if (newEpic.getStatus() == null) {
+            newEpic.setStatus(Task.Status.NEW);
+        }
 
         epics.put(newEpic.getId(), newEpic);
         epicStateCheck(newEpic.getId());
@@ -168,14 +188,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask addSubTask(SubTask subTask) {
-        Epic epic = epics.get(subTask.getEpicId());
+        boolean isClashing;
         subTask.setId(generateId());
-        boolean isClashing = true;
+        Epic epic = epics.get(subTask.getEpicId());
 
         try {
             isClashing = validateTaskTime(subTask);
         } catch (TaskTimeException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerException(e.getMessage());
         }
 
         if (subTask.getStatus() == null) {
@@ -197,9 +217,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public SubTask getSubTaskById(int id) {
-        historyManager.add(subTasks.get(id));
-        return subTasks.get(id);
+    public Optional<SubTask> getSubTaskById(int id) {
+        if (subTasks.containsKey(id)) {
+            try {
+                historyManager.add(subTasks.get(id));
+                validateTaskTime(subTasks.get(id));
+                return Optional.of(subTasks.get(id));
+            } catch (TaskTimeException e) {
+                throw new ManagerException(e.getMessage());
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -217,20 +246,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask updateSubTask(SubTask subTask) {
-        boolean isClashing = true;
-        if (subTasks.containsKey(subTask.getId())) {
-            try {
-                isClashing = validateTaskTime(subTask);
-            } catch (TaskTimeException e) {
-                System.out.println(e.getMessage());
-            }
-            subTasks.replace(subTask.getId(), subTask);
-            Epic epic = epics.get(subTask.getEpicId());
-            epicStateCheck(epic.getId());
-            if (subTask.getStartTime() != null && !isClashing) {
-                prioritizedTasks.remove(subTask);
+        try {
+            if (subTasks.containsKey(subTask.getId())) {
+                prioritizedTasks.remove(subTasks.get(subTask.getId()));
                 prioritizedTasks.add(subTask);
+                subTasks.replace(subTask.getId(), subTask);
+                Epic epic = epics.get(subTask.getEpicId());
+                epicStateCheck(epic.getId());
             }
+            validateTaskTime(subTask);
+        } catch (TaskTimeException e) {
+            throw new ManagerException(e.getMessage());
         }
         return subTask;
     }
@@ -277,8 +303,10 @@ public class InMemoryTaskManager implements TaskManager {
         currentEpic.setStartTime(getMinimalStartTime(currentEpic));
     }
 
-    public boolean validateTaskTime(Task task) throws TaskTimeException {
+
+    private boolean validateTaskTime(Task task) throws TaskTimeException {
         List<Integer> clashingTasks = prioritizedTasks.stream()
+                .filter(t -> t.getId() != task.getId())
                 .filter(t -> (task.getStartTime().equals(t.getStartTime())) ||
                         (task.getStartTime().isAfter(t.getStartTime())) &&
                                 (task.getStartTime().isBefore(t.getEndTime())) ||

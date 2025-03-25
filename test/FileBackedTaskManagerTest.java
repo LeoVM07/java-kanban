@@ -31,7 +31,7 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         testingManager.addTask(task1);
 
         Task task2 = new Task("TestTask2", "TestTask2 description", Task.Status.IN_PROGRESS,
-                Duration.ofMinutes(5), LocalDateTime.now());
+                Duration.ofMinutes(5), LocalDateTime.now().plusMinutes(20));
         testingManager.addTask(task2);
 
         Epic epic1 = new Epic("TestEpic1", "TestEpic1 description");
@@ -44,15 +44,15 @@ public class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         testingManager.addEpic(epic3);
 
         SubTask subTask1 = new SubTask("TestSubTask1", "TestSubTask1 description", Task.Status.DONE,
-                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now());
+                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now().minusMinutes(25));
         testingManager.addSubTask(subTask1);
 
         SubTask subTask2 = new SubTask("TestSubTask2", "TestSubTask2 description", Task.Status.IN_PROGRESS,
-                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now());
+                epic1.getId(), Duration.ofMinutes(5), LocalDateTime.now().plusMinutes(30));
         testingManager.addSubTask(subTask2);
 
         SubTask subTask3 = new SubTask("TestSubTask3", "TestSubTask3 description", Task.Status.DONE,
-                epic3.getId(), Duration.ofMinutes(5), LocalDateTime.now());
+                epic3.getId(), Duration.ofMinutes(5), LocalDateTime.now().minusMinutes(35));
         testingManager.addSubTask(subTask3);
     }
 
